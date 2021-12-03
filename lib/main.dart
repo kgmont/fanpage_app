@@ -1,79 +1,61 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:splashscreen/splashscreen.dart';
-import 'driver.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+void main() {
+  runApp(MyApp());
+}
 
-class SomeError extends StatelessWidget {
-  const SomeError({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Splash Screen',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+      ),
+      home: MyHomePage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(
+        Duration(seconds: 3),
+        () => Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => SecondScreen())));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
-    );
+        color: Colors.black,
+        child: Image(image: AssetImage('splashscreen.jpg')));
   }
 }
 
-class _MainAppState extends State<App> {
-  final Future<FirebaseApp> _initialize = Firebase.initializeApp();
-
+class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: FutureBuilder(
-          future: _initialize,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return SomeError();
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return SecondSplash();
-            } else {
-              return Container(color: Colors.blue);
-            }
-          },
-        ),
-      ),
+    return Scaffold(
+      appBar: AppBar(title: Text("Fan Page App")),
+      body: Center(
+          child: Text(
+        "Home page",
+        textScaleFactor: 2,
+      )),
     );
   }
 }
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(App());
-}
-
-class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
-
-  @override
-  _MainAppState createState() => _MainAppState();
-}
-
-
-class SecondSplash extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SplashScreen(
-      seconds: 5,
-      navigateAfterSeconds: AppDriver(),
-      title: new Text('Midterm Application',textScaleFactor: 2,),
-      image: new Image.asset('assets/mypicture.jpg',),
-      loadingText: Text("Waiting..."),
-      photoSize: 150.0,
-      loaderColor: Colors.green,
-      backgroundColor: Colors.blue,
-    );
-  }
-}
-
-class Waiting extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-}
+FirebaseAuth auth = FirebaseAuth.instance;
